@@ -13,6 +13,13 @@ import flash.display3D.IndexBuffer3D;
 import flash.display3D.VertexBuffer3D;
 import flash.display3D.Context3DVertexBufferFormat;
 
+import flash.display3D.textures.Texture;
+import flash.display3D.Context3DTextureFormat;
+import flash.display3D.Context3DMipFilter;
+import flash.display3D.Context3DTextureFilter;
+import flash.display3D.Context3DWrapMode;
+
+
 import flash.display3D.shaders.glsl.GLSLFragmentShader;
 import flash.display3D.shaders.glsl.GLSLVertexShader;
 
@@ -30,10 +37,7 @@ class Main extends Sprite {
     private var vertexBuffer : VertexBuffer3D;
     private var indexBuffer : IndexBuffer3D;
 
-//	private var shaderProgram:GLProgram;
-//	private var vertexAttribute:Int;
-//	private var vertexBuffer:GLBuffer;
-//	private var view:OpenGLView;
+    private var texture : Texture;
 
 	public function new () {
         super ();
@@ -42,7 +46,7 @@ class Main extends Sprite {
         stage3D.addEventListener(ErrorEvent.ERROR, onError);
         stage3D.requestContext3D();
 
-       	}
+    }
 
 	private function onError(event : ErrorEvent):Void{
 	    trace(event);
@@ -55,15 +59,21 @@ class Main extends Sprite {
 
         var vertexShaderSource =
 			"attribute vec3 vertexPosition;
+		    attribute vec2 uv;
 			uniform mat4 modelViewMatrix;
 			uniform mat4 projectionMatrix;
+			varying vec2 vTexCoord;
 			void main(void) {
 				gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPosition, 1.0);
+				vTexCoord = uv;
 			}";
 
 		var fragmentShaderSource =
-			"void main(void) {
-				gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+			"varying vec2 vTexCoord;
+			 uniform sampler2D texture;
+		     void main(void) {
+		        vec4 texColor = texture2D(texture, vTexCoord); 
+				gl_FragColor = texColor;
 			}";
 
         var vertexShader = new GLSLVertexShader(vertexShaderSource);
@@ -72,14 +82,17 @@ class Main extends Sprite {
         sceneProgram = new GLSLProgram(context3D);
         sceneProgram.upload(vertexShader, fragmentShader);
 
+        var logo = openfl.Assets.getBitmapData("assets/hxlogo.png");
+        texture = context3D.createTexture(logo.width,logo.height, Context3DTextureFormat.BGRA,false);
+        texture.uploadFromBitmapData(logo);
 
         var vertices = [
-            100, 100, 0,
-            -100, 100, 0,
-            100, -100, 0,
-            -100, -100, 0
+            100, 100, 0,    0,0,
+            -100, 100, 0,   1,0,
+            100, -100, 0,   0,1,
+            -100, -100, 0,   1,1
         ];
-        vertexBuffer = context3D.createVertexBuffer(4,3);
+        vertexBuffer = context3D.createVertexBuffer(4,5);
         vertexBuffer.uploadFromVector(vertices, 0, 4);
 
         indexBuffer = context3D.createIndexBuffer(6);
@@ -98,8 +111,11 @@ class Main extends Sprite {
 
         sceneProgram.attach();
         sceneProgram.setVertexBufferAt("vertexPosition",vertexBuffer,0,Context3DVertexBufferFormat.FLOAT_3);
+        sceneProgram.setVertexBufferAt("uv",vertexBuffer,3,Context3DVertexBufferFormat.FLOAT_2);
+        sceneProgram.setTextureAt("texture",texture);
         sceneProgram.setVertexUniformFromMatrix("projectionMatrix",projectionMatrix,true);
         sceneProgram.setVertexUniformFromMatrix("modelViewMatrix",modelViewMatrix,true);
+        //context3D.setGLSLSamplerStateAt("texture",Context3DWrapMode.CLAMP,Context3DTextureFilter.LINEAR,Context3DMipFilter.MIPLINEAR);
 
         context3D.drawTriangles(indexBuffer);
 	}

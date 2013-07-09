@@ -8,7 +8,7 @@
 	
 	<haxelib name="openfl" />
 	
-    <source path="assets" exclude="nme.svg"/>
+    <assets path="assets" exclude="nme.svg"/>
 
 	<icon path="assets/nme.svg" />
     
