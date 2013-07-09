@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	
+	<meta title="OpenFLStage3DTest" package="wighawag.test.stage3d" version="1.0.0" company="Wighawag" />
+    <app main="Main" path="target/openfl" file="OpenFLStage3DTest" />
+	
+	<source path="src" />
+	
+	<haxelib name="openfl" />
+	
+    <source path="assets" exclude="nme.svg"/>
+
+	<icon path="assets/nme.svg" />
+    
+    <haxelib name="stage3d-glsl-wrapper" version="0.0.1" />	
+
+    <!--<haxelib name="openfl-native-stage3d" version="0.0.1"/>-->
+    <classpath path="/usr/lib/haxe/lib/openfl-native-stage3d/0,0,1/" /> <!-- need to be there to override openfl Stage -->
+	
+</project>

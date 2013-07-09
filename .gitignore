@@ -1,0 +1,10 @@
+*~
+*.swp
+haxelib/
+test-build/
+test-report/
+.idea/
+*.iml
+tags
+target/
+*.xml.hxml
