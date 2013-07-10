@@ -23,8 +23,7 @@ import flash.display3D.Context3DWrapMode;
 import flash.display3D.shaders.glsl.GLSLFragmentShader;
 import flash.display3D.shaders.glsl.GLSLVertexShader;
 
-using flash.display3D.Context3DUtils;
-using flash.display.Stage3DUtils;
+using OpenFLStage3D;
 
 import flash.events.Event;
 import flash.events.ErrorEvent;
