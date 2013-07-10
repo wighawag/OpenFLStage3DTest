@@ -24,6 +24,7 @@ import flash.display3D.shaders.glsl.GLSLFragmentShader;
 import flash.display3D.shaders.glsl.GLSLVertexShader;
 
 using flash.display3D.Context3DUtils;
+using flash.display.Stage3DUtils;
 
 import flash.events.Event;
 import flash.events.ErrorEvent;
@@ -41,7 +42,7 @@ class Main extends Sprite {
 
 	public function new () {
         super ();
-        stage3D = stage.stage3Ds[0];
+        stage3D = new Stage3D();//stage.getStage3D(0);
         stage3D.addEventListener(Event.CONTEXT3D_CREATE, onReady);
         stage3D.addEventListener(ErrorEvent.ERROR, onError);
         stage3D.requestContext3D();
@@ -115,7 +116,7 @@ class Main extends Sprite {
         sceneProgram.setTextureAt("texture",texture);
         sceneProgram.setVertexUniformFromMatrix("projectionMatrix",projectionMatrix,true);
         sceneProgram.setVertexUniformFromMatrix("modelViewMatrix",modelViewMatrix,true);
-        //context3D.setGLSLSamplerStateAt("texture",Context3DWrapMode.CLAMP,Context3DTextureFilter.LINEAR,Context3DMipFilter.MIPLINEAR);
+        context3D.setGLSLSamplerStateAt("texture",Context3DWrapMode.CLAMP,Context3DTextureFilter.LINEAR,Context3DMipFilter.MIPNONE);
 
         context3D.drawTriangles(indexBuffer);
 	}
