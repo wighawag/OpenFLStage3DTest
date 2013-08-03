@@ -41,7 +41,7 @@ class Main extends Sprite {
 
 	public function new () {
         super ();
-        stage3D = new Stage3D();//stage.getStage3D(0);
+        stage3D = stage.getStage3D(0);
         stage3D.addEventListener(Event.CONTEXT3D_CREATE, onReady);
         stage3D.addEventListener(ErrorEvent.ERROR, onError);
         stage3D.requestContext3D();
@@ -68,6 +68,8 @@ class Main extends Sprite {
 				vTexCoord = uv;
 			}";
 
+        var vertexAgalInfo = '{"varnames":{"uv":"va1","modelViewMatrix":"vc0","projectionMatrix":"vc1","vertexPosition":"va0"},"agalasm":"m44 vt0, va0, vc0\\nm44 op, vt0, vc1\\nmov v0, va1","storage":{},"types":{},"info":"","consts":{}}';
+
 		var fragmentShaderSource =
 			"varying vec2 vTexCoord;
 			 uniform sampler2D texture;
@@ -76,8 +78,10 @@ class Main extends Sprite {
 				gl_FragColor = texColor;
 			}";
 
-        var vertexShader = new GLSLVertexShader(vertexShaderSource);
-        var fragmentShader = new GLSLFragmentShader(fragmentShaderSource);
+        var fragmentAgalInfo = '{"varnames":{"texture":"fs0"},"agalasm":"mov ft0, v0\\ntex ft1, ft0, fs0 <2d,clamp,nearest>\\nmov oc, ft1","storage":{},"types":{},"info":"","consts":{}}';
+
+        var vertexShader = new GLSLVertexShader(vertexShaderSource,vertexAgalInfo);
+        var fragmentShader = new GLSLFragmentShader(fragmentShaderSource,fragmentAgalInfo);
 
         sceneProgram = new GLSLProgram(context3D);
         sceneProgram.upload(vertexShader, fragmentShader);
@@ -86,17 +90,24 @@ class Main extends Sprite {
         texture = context3D.createTexture(logo.width,logo.height, Context3DTextureFormat.BGRA,false);
         texture.uploadFromBitmapData(logo);
 
-        var vertices = [
-            100, 100, 0,    0,0,
-            -100, 100, 0,   1,0,
-            100, -100, 0,   0,1,
-            -100, -100, 0,   1,1
-        ];
+        var vertices = new flash.Vector<Float>();
+        vertices.push(100); vertices.push(100); vertices.push(0);    vertices.push(0);vertices.push(0);
+        vertices.push(-100); vertices.push(100); vertices.push(0);    vertices.push(1);vertices.push(0);
+        vertices.push(100); vertices.push(-100); vertices.push(0);    vertices.push(0);vertices.push(1);
+        vertices.push(-100); vertices.push(-100); vertices.push(0);    vertices.push(1);vertices.push(1);
+
         vertexBuffer = context3D.createVertexBuffer(4,5);
         vertexBuffer.uploadFromVector(vertices, 0, 4);
 
         indexBuffer = context3D.createIndexBuffer(6);
-        indexBuffer.uploadFromVector([0,1,2,1,2,3], 0, 6);
+        var indexes = new flash.Vector<UInt>();
+        indexes.push(0);
+        indexes.push(1);
+        indexes.push(2);
+        indexes.push(1);
+        indexes.push(2);
+        indexes.push(3);
+        indexBuffer.uploadFromVector(indexes, 0, 6);
 
         context3D.setRenderCallback(renderView);
     }
@@ -106,8 +117,8 @@ class Main extends Sprite {
 
 		var positionX = stage.stageWidth / 2;
 		var positionY = stage.stageHeight / 2;
-		var projectionMatrix = Matrix3D.createOrtho (0, stage.stageWidth, stage.stageHeight, 0, 1000, -1000);
-		var modelViewMatrix = Matrix3D.create2D (positionX, positionY, 1, 0);
+		var projectionMatrix = Matrix3DUtils.createOrtho (0, stage.stageWidth, stage.stageHeight, 0, 1000, -1000);
+		var modelViewMatrix = Matrix3DUtils.create2D (positionX, positionY, 1, 0);
 
         sceneProgram.attach();
         sceneProgram.setVertexBufferAt("vertexPosition",vertexBuffer,0,Context3DVertexBufferFormat.FLOAT_3);
@@ -115,7 +126,7 @@ class Main extends Sprite {
         sceneProgram.setTextureAt("texture",texture);
         sceneProgram.setVertexUniformFromMatrix("projectionMatrix",projectionMatrix,true);
         sceneProgram.setVertexUniformFromMatrix("modelViewMatrix",modelViewMatrix,true);
-        context3D.setGLSLSamplerStateAt("texture",Context3DWrapMode.CLAMP,Context3DTextureFilter.LINEAR,Context3DMipFilter.MIPNONE);
+        sceneProgram.setSamplerStateAt("texture",Context3DWrapMode.CLAMP,Context3DTextureFilter.LINEAR,Context3DMipFilter.MIPNONE);
 
         context3D.drawTriangles(indexBuffer);
 	}
