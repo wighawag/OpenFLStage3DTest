@@ -11,14 +11,27 @@ class Matrix3DUtils{
         var c = Math.cos (theta);
         var s = Math.sin (theta);
 
-        var values = new Vector<Float>(16);
-        values[0] = c * scale;  values[1]=-s * scale; values[2]=0;  values[3]=0;
-        values[4] = s * scale;  values[5]=c * scale;  values[6]=0;  values[7]=0;
-        values[8] = 0;          values[9]=0;          values[10]=1; values[11]=0;
-        values[12] = x;         values[13]=y;         values[14]=0; values[15]=1;
-        return new Matrix3D (values);
+        return new Matrix3D (Vector.ofArray([
+            c * scale, -s * scale, 0, 0,
+            s * scale, c * scale, 0, 0,
+            0, 0, 1, 0,
+            x, y, 0, 1
+        ]));
 
     }
+
+
+    public static function createABCD (a:Float, b:Float, c:Float, d:Float, tx:Float, ty:Float):Matrix3D {
+
+        return new Matrix3D (Vector.ofArray([
+            a, b, 0, 0,
+            c, d, 0, 0,
+            0, 0, 1, 0,
+            tx, ty, 0, 1
+        ]));
+
+    }
+
 
     public static function createOrtho (x0:Float, x1:Float,  y0:Float, y1:Float, zNear:Float, zFar:Float):Matrix3D {
 
@@ -26,15 +39,14 @@ class Matrix3DUtils{
         var sy = 1.0 / (y1 - y0);
         var sz = 1.0 / (zFar - zNear);
 
-        var values = new Vector<Float>(16);
-        values[0] = 2.0 * sx;           values[1]=0;                values[2]=0;                     values[3]=0;
-        values[4] = 0;                  values[5]=2.0 * sy;         values[6]=0;                     values[7]=0;
-        values[8] = 0;                  values[9]=0;                values[10]=-2.0*sz;              values[11]=0;
-        values[12] = -(x0 + x1) * sx;   values[13]=-(y0 + y1) * sy; values[14]=-(zNear + zFar) * sz; values[15]=1;
-        return new Matrix3D (values);
+        return new Matrix3D (Vector.ofArray([
+            2.0 * sx, 0, 0, 0,
+            0, 2.0 * sy, 0, 0,
+            0, 0, -2.0 * sz, 0,
+            -(x0 + x1) * sx, -(y0 + y1) * sy, -(zNear + zFar) * sz, 1
+        ]));
 
     }
-
 
 
 }
