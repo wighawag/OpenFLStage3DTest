@@ -17,6 +17,6 @@
 
 	<icon path="assets/nme.svg" />
     
-     <haxelib name="openfl-stage3d" version="0.1.1"/>
+     <haxelib name="openfl-stage3d" version="0.1.2"/>
 
 </project>
