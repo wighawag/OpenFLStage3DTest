@@ -35,7 +35,7 @@ class Main extends Sprite {
         #if flash
             flash.Lib.trace(message);
         #elseif js
-            js.Lib.trace(message);
+             untyped console.log(message);
         #else
             untyped __trace(message, posInfos);
         #end
@@ -60,7 +60,10 @@ class Main extends Sprite {
         stage3D.addEventListener(Event.CONTEXT3D_CREATE, onReady);
         stage3D.addEventListener(ErrorEvent.ERROR, onError);
         stage3D.requestContext3D();
-
+		
+		
+		//stage3D.x = 30;
+		//stage3D.y = 30;
 
 
     }
@@ -126,11 +129,14 @@ class Main extends Sprite {
 
         context3D.setBlendFactors(flash.display3D.Context3DBlendFactor.SOURCE_ALPHA, flash.display3D.Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA);
         context3D.setRenderCallback(renderView);
+		
+		//context3D.setScissorRectangle(new Rectangle(30,30,100,100));
     }
 
 	private function renderView (event : Event):Void {
         context3D.clear(0, 0.5, 0, 0);
 
+		
 		var positionX = stage.stageWidth / 2;
 		var positionY = stage.stageHeight / 2;
 		var projectionMatrix = Matrix3DUtils.createOrtho (0, stage.stageWidth, stage.stageHeight, 0, 1000, -1000);
