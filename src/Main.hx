@@ -77,8 +77,24 @@ class Main extends Sprite {
         context3D.configureBackBuffer(stage.stageWidth, stage.stageHeight, 0, false);
         context3D.enableErrorChecking = true;
 
+        #if html5
         var vertexShaderSource =
-			"attribute vec3 vertexPosition;
+			"precision mediump int;
+			precision mediump float;
+			attribute vec3 vertexPosition;
+		    attribute vec2 uv;
+			uniform mat4 modelViewMatrix;
+			uniform mat4 projectionMatrix;
+			//uniform mat4 matrix;
+			varying vec2 vTexCoord;
+			void main(void) {
+				gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPosition, 1.0);
+				//gl_Position = matrix * vec4(vertexPosition, 1.0);
+				vTexCoord = uv;
+			}";
+        #else
+        var vertexShaderSource =
+        "attribute vec3 vertexPosition;
 		    attribute vec2 uv;
 			uniform mat4 modelViewMatrix;
 			uniform mat4 projectionMatrix;
@@ -90,16 +106,32 @@ class Main extends Sprite {
 				vTexCoord = uv;
 			}";
 
+        #end
+
+
         //var vertexAgalInfo = '{"varnames":{"uv":"va1","matrix":"vc0","vertexPosition":"va0"},"agalasm":"m44 op, va0, vc0\\nmov v0, va1","storage":{},"types":{},"info":"","consts":{}}';
         var vertexAgalInfo = '{"varnames":{"uv":"va1","modelViewMatrix":"vc0","projectionMatrix":"vc4","vertexPosition":"va0"},"agalasm":"m44 vt0, va0, vc0\\nm44 op, vt0, vc4\\nmov v0, va1","storage":{},"types":{},"info":"","consts":{}}';
 
+        #if html5
 		var fragmentShaderSource =
-			"varying vec2 vTexCoord;
+			"precision mediump int;
+			precision mediump float;
+			varying vec2 vTexCoord;
 			 uniform sampler2D texture;
 		     void main(void) {
 		        vec4 texColor = texture2D(texture, vTexCoord);
 				gl_FragColor = texColor;
 			}";
+        #else
+        var fragmentShaderSource =
+        "varying vec2 vTexCoord;
+			 uniform sampler2D texture;
+		     void main(void) {
+		        vec4 texColor = texture2D(texture, vTexCoord);
+				gl_FragColor = texColor;
+			}";
+        #end
+
 
         var fragmentAgalInfo = '{"varnames":{"texture":"fs0"},"agalasm":"mov ft0, v0\\ntex ft1, ft0, fs0 <2d,wrap,linear>\\nmov oc, ft1","storage":{},"types":{},"info":"","consts":{}}';
 

@@ -17,11 +17,13 @@
 
 	<icon path="assets/nme.svg" />
     
+
      <haxelib name="openfl-stage3d" version="0.1.4"/>
 	 
 	 <haxeflag name="-swf-lib" value="glsl2agal.swf" if="flash" />
 <haxedef name="glsl2agal" if="flash" /> <!-- not sure if we should set it by default -->
 
 <haxeflag name="-swf-lib" value="agalminiassembler.swf" if="flash"/>
+
 
 </project>
