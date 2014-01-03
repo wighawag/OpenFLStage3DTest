@@ -11,14 +11,14 @@
 	
 	<source path="src" />
 	
-	<haxelib name="openfl" version="1.1.1"/>
+	<haxelib name="openfl" version="1.2.2"/>
 	
     <assets path="assets" exclude="nme.svg"/>
 
 	<icon path="assets/nme.svg" />
     
 
-     <haxelib name="openfl-stage3d" version="0.1.4"/>
+     <haxelib name="openfl-stage3d" version="0.1.5"/>
 	 
 	 <haxeflag name="-swf-lib" value="glsl2agal.swf" if="flash" />
 <haxedef name="glsl2agal" if="flash" /> <!-- not sure if we should set it by default -->
